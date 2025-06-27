@@ -22,30 +22,48 @@ function createCactus() {
 }
 
 export function createWorld(scene, collisionObjects, interactiveObjects) {
-    // Chão
+    // --- Carregador de Texturas ---
+    const textureLoader = new THREE.TextureLoader();
+
+    // --- Chão Texturizado com Relevo ---
+    
+    // 1. Carrega a textura de COR (Diffuse Map). 
+    // Certifique-se que o nome do arquivo 'gravelly_sand_diff_4k.jpg' está correto.
+    const groundTexture = textureLoader.load('./assets/textures/gravelly_sand_diff_4k.jpg');
+    groundTexture.wrapS = THREE.RepeatWrapping;
+    groundTexture.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set(50, 50);
+
+    // 2. Carrega a textura de RELEVO (Normal Map).
+    // Certifique-se que o nome do arquivo 'gravelly_sand_nor_gl_4k.png' está correto.
+    // É este que dá a ilusão de profundidade!
+    const groundNormalMap = textureLoader.load('./assets/textures/gravelly_sand_nor_gl_4k.png');
+    groundNormalMap.wrapS = THREE.RepeatWrapping;
+    groundNormalMap.wrapT = THREE.RepeatWrapping;
+    groundNormalMap.repeat.set(50, 50);
+
     const groundGeometry = new THREE.PlaneGeometry(200, 200);
-    const groundMaterial = new THREE.MeshStandardMaterial({ color: 0xc2b280 }); 
+    
+    // 3. Adiciona as duas texturas ao material do chão.
+    const groundMaterial = new THREE.MeshStandardMaterial({ 
+        map: groundTexture,      // Textura de cor
+        normalMap: groundNormalMap // Textura de relevo
+    }); 
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     scene.add(ground);
 
-    // --- Cidade do Velho Oeste (com paredes de colisão individuais) ---
-    
-    // Função auxiliar para simplificar a criação
+    // --- Cidade do Velho Oeste ---
     const addBuilding = (name, width, height, depth, color, x, y, z) => {
-        // Pega o grupo do prédio e suas paredes de colisão
-        const { buildingGroup, colliders } = createBuilding(width, height, depth, color, x, y, z);
+        const { buildingGroup, colliders } = createBuilding(width, height, depth, color, x, y, z, textureLoader);
         buildingGroup.name = name;
         
         scene.add(buildingGroup);
-        // Adiciona CADA parede à lista de colisões global
         collisionObjects.push(...colliders);
-        // O objeto interativo continua sendo o grupo principal
         interactiveObjects.push(buildingGroup);
     };
 
-    // Adiciona os prédios usando a nova função
     addBuilding("Saloon", 10, 8, 15, 0xd2b48c, -15, 0, -10);
     addBuilding("Banco", 8, 6, 8, 0xaaaaaa, 15, 0, -10);
     addBuilding("Estábulo", 12, 5, 20, 0x8b4513, -15, 0, 20);
