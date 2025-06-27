@@ -30,33 +30,26 @@ export function createWorld(scene, collisionObjects, interactiveObjects) {
     ground.receiveShadow = true;
     scene.add(ground);
 
-    // Saloon
-    const saloon = createBuilding(10, 8, 15, 0xd2b48c, -15, 0, -10);
-    saloon.name = "Saloon";
-    scene.add(saloon);
-    collisionObjects.push(saloon);
-    interactiveObjects.push(saloon);
+    // --- Cidade do Velho Oeste (com paredes de colisão individuais) ---
+    
+    // Função auxiliar para simplificar a criação
+    const addBuilding = (name, width, height, depth, color, x, y, z) => {
+        // Pega o grupo do prédio e suas paredes de colisão
+        const { buildingGroup, colliders } = createBuilding(width, height, depth, color, x, y, z);
+        buildingGroup.name = name;
+        
+        scene.add(buildingGroup);
+        // Adiciona CADA parede à lista de colisões global
+        collisionObjects.push(...colliders);
+        // O objeto interativo continua sendo o grupo principal
+        interactiveObjects.push(buildingGroup);
+    };
 
-    // Banco
-    const bank = createBuilding(8, 6, 8, 0xaaaaaa, 15, 0, -10);
-    bank.name = "Banco";
-    scene.add(bank);
-    collisionObjects.push(bank);
-    interactiveObjects.push(bank);
-
-    // Estábulo
-    const stable = createBuilding(12, 5, 20, 0x8b4513, -15, 0, 20);
-    stable.name = "Estábulo";
-    scene.add(stable);
-    collisionObjects.push(stable);
-    interactiveObjects.push(stable);
-
-    // Escritório do Xerife
-    const sheriffOffice = createBuilding(7, 6, 7, 0xdeb887, 15, 0, 15);
-    sheriffOffice.name = "Xerife";
-    scene.add(sheriffOffice);
-    collisionObjects.push(sheriffOffice);
-    interactiveObjects.push(sheriffOffice);
+    // Adiciona os prédios usando a nova função
+    addBuilding("Saloon", 10, 8, 15, 0xd2b48c, -15, 0, -10);
+    addBuilding("Banco", 8, 6, 8, 0xaaaaaa, 15, 0, -10);
+    addBuilding("Estábulo", 12, 5, 20, 0x8b4513, -15, 0, 20);
+    addBuilding("Xerife", 7, 6, 7, 0xdeb887, 15, 0, 15);
 
     // Cactos
     for (let i = 0; i < 50; i++) {

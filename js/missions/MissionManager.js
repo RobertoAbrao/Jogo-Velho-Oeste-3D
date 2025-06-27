@@ -6,7 +6,6 @@ let activeMission = null;
 export const MissionManager = {
     startMission(missionId) {
         const mission = missions.find(m => m.id === missionId);
-        // Só inicia a missão se ela existir e estiver inativa
         if (mission && mission.status === 'inactive') {
             mission.status = 'active';
             activeMission = mission;
@@ -18,10 +17,9 @@ export const MissionManager = {
     },
 
     checkObjectives(interactionTarget) {
-        if (!activeMission) return;
+        if (!activeMission || activeMission.status !== 'active') return;
 
         activeMission.objectives.forEach(obj => {
-            // Se o objetivo é do tipo "chegar a um local" e o alvo é o local onde interagimos
             if (obj.type === 'reach_location' && obj.target === interactionTarget.name && !obj.completed) {
                 this.completeObjective(obj);
             }
@@ -32,19 +30,35 @@ export const MissionManager = {
         objective.completed = true;
         console.log(`Objetivo concluído: ${objective.description}`);
 
-        // Verifica se todos os objetivos foram concluídos
         const allDone = activeMission.objectives.every(obj => obj.completed);
         if (allDone) {
-            console.log(`Missão "${activeMission.title}" concluída!`);
-            // Poderíamos mudar o status para "completed" aqui, mas vamos deixar
-            // o jogador voltar ao Xerife primeiro.
+            console.log(`Todos os objetivos da missão "${activeMission.title}" concluídos!`);
+            activeMission.status = 'ready_to_complete'; // Novo status!
         }
 
         UIManager.updateMissionUI(activeMission);
     },
 
+    // NOVA FUNÇÃO para finalizar a missão
+    completeMission(interactionTarget) {
+        if (!activeMission || activeMission.status !== 'ready_to_complete') {
+            return false; // Não há missão pronta para ser concluída
+        }
+
+        // Verifica se estamos falando com a pessoa que nos deu a missão
+        if (activeMission.questGiver === interactionTarget.name) {
+            alert(activeMission.completionDialogue); // Mostra o diálogo final
+            console.log(`Missão "${activeMission.title}" finalizada!`);
+            
+            activeMission.status = 'completed';
+            activeMission = null; // Limpa a missão ativa
+            UIManager.updateMissionUI(null); // Esconde a UI da missão
+            return true;
+        }
+        return false;
+    },
+
     getQuestGiver(objectName) {
-        // Encontra uma missão que pode ser dada pelo objeto com o qual interagimos
         return missions.find(m => m.questGiver === objectName && m.status === 'inactive');
     }
 };
