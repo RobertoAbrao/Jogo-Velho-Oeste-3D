@@ -1,7 +1,7 @@
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import { handleInteraction } from './interactions.js';
 
-export function setupControls(camera, domElement, player) {
+export function setupControls(camera, domElement, player, interactiveObjects) {
     const controls = new PointerLockControls(camera, domElement);
 
     const blocker = document.getElementById('blocker');
@@ -30,7 +30,7 @@ export function setupControls(camera, domElement, player) {
                 player.move.right = true;
                 break;
             case 'KeyE':
-                handleInteraction(camera);
+                handleInteraction(camera, interactiveObjects);
                 break;
         }
     };

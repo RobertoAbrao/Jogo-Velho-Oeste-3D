@@ -3,7 +3,7 @@ import { setupScene } from './sceneConfig.js';
 import { createWorld } from './world/world.js';
 import { createLights } from './world/lights.js';
 import { setupPlayer } from './player/player.js';
-import { checkInteraction } from './player/interactions.js';
+import { updateInteractionPrompt } from './player/interactions.js'; // Alterado aqui
 
 // ====================================================================
 // VARIÁVEIS GLOBAIS
@@ -19,22 +19,17 @@ const interactiveObjects = [];
 function init() {
     clock = new THREE.Clock();
 
-    // Configuração básica da cena, câmera e renderizador
     ({ scene, camera, renderer } = setupScene());
     
-    // Criação do mundo (chão, prédios, etc.)
     createWorld(scene, collisionObjects, interactiveObjects);
     
-    // Iluminação da cena
     createLights(scene);
 
-    // Configuração do jogador e controles
-    ({ player, controls } = setupPlayer(camera, scene));
+    // Passamos a lista de objetos para o setup do jogador
+    ({ player, controls } = setupPlayer(camera, scene, interactiveObjects));
     
-    // Eventos
     window.addEventListener('resize', onWindowResize);
 
-    // Inicia o loop de animação
     animate();
 }
 
@@ -59,7 +54,8 @@ function animate() {
         player.update(delta, collisionObjects);
     }
     
-    checkInteraction(camera, interactiveObjects);
+    // Atualiza o prompt de interação (ex: "Pressione [E]")
+    updateInteractionPrompt(camera, interactiveObjects); // Alterado aqui
     
     renderer.render(scene, camera);
 }

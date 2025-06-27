@@ -78,7 +78,12 @@
     
     <div id="interaction-prompt">Pressione [E] para interagir</div>
 
-    <script type="importmap">
+    <div id="mission-box" style="display: none; position: absolute; top: 20px; right: 20px; background-color: rgba(0,0,0,0.6); padding: 15px; border-radius: 5px; border: 1px solid #f7b32b; width: 250px;">
+        <h3 id="mission-title" style="margin: 0; padding: 0; color: #f7b32b; font-size: 1.2em;"></h3>
+        <p id="mission-objective" style="margin: 10px 0 0; padding: 0; font-size: 1em;"></p>
+    </div>
+
+<script type="importmap">
         {
             "imports": {
                 "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
@@ -86,6 +91,8 @@
             }
         }
     </script>
+
+    
 
     <script type="module" src="js/main.js"></script>
 </body>
