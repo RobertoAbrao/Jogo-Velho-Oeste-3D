@@ -4,7 +4,9 @@ const missionObjective = document.getElementById('mission-objective');
 
 export const UIManager = {
     updateMissionUI(mission) {
-        if (mission && mission.status === 'active') {
+        // AQUI ESTÁ A CORREÇÃO!
+        // A UI agora aparece se a missão estiver 'active' OU 'ready_to_complete'.
+        if (mission && (mission.status === 'active' || mission.status === 'ready_to_complete')) {
             missionTitle.textContent = mission.title;
             
             // Encontra o primeiro objetivo não concluído para exibir
@@ -12,12 +14,13 @@ export const UIManager = {
             if (currentObjective) {
                 missionObjective.textContent = `- ${currentObjective.description}`;
             } else {
-                // Se todos os objetivos foram concluídos
-                missionObjective.textContent = "Missão concluída! Volte ao Xerife.";
+                // Se todos os objetivos foram concluídos, mostra a próxima instrução.
+                missionObjective.textContent = "✔ Missão concluída! Volte ao Xerife.";
             }
 
             missionBox.style.display = 'block';
         } else {
+            // Se não houver missão ativa ou se ela for finalizada, esconde a caixa.
             missionBox.style.display = 'none';
         }
     }
